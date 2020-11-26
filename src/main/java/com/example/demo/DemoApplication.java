@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class DemoApplication {
 
 	public static final int COLUMNS = 6_666_666;
-	public static final int BATCH_SIZE = 25000;
+	public static final int BATCH_SIZE = 2000;
 	public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
 	public static void main(String[] args) throws DatabaseException, SQLException, InterruptedException {
@@ -32,6 +32,9 @@ public class DemoApplication {
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Enter any sign to start...");
 		scanner.nextLine();
+		System.out.println("========================================");
+		System.out.println("");
+		System.out.println("========================================");
 
 		log.info("Creating insert data");
 		LinkedList<Map<String, String>> rowsData = new LinkedList<>();
@@ -46,6 +49,7 @@ public class DemoApplication {
 			if (i % BATCH_SIZE == 0) {
 				addImportsToQue(rowsData, connection);
 				rowsData= new LinkedList<>();
+				log.info("Batch nr: " + i/BATCH_SIZE + " created.");
 			}
 		}
 		addImportsToQue(rowsData, connection);
