@@ -14,18 +14,23 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 @Slf4j
 @SpringBootApplication
 public class DemoApplication {
 
-	public static final int COLUMNS = 666_666;
+	public static final int COLUMNS = 6_666_666;
+	static ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-	public static void main(String[] args) throws DatabaseException, SQLException {
+	public static void main(String[] args) throws DatabaseException, SQLException, InterruptedException {
 		SpringApplication.run(DemoApplication.class, args);
 
 		Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "");
 
-		connection.setAutoCommit(false);
+//		connection.setAutoCommit(false);
 		Statement statement = connection.createStatement();
 
 		Scanner scanner = new Scanner(System.in);
@@ -41,9 +46,24 @@ public class DemoApplication {
 			map.put(new String("name4"), new String("name4"));
 			map.put(new String("name5"), new String("name5"));
 			objects.add(map);
+			if (i % 2500 == 0) {
+				addImportsToQue(objects, connection);
+				objects= new LinkedList<>();
+			}
 		}
-		log.info("2");
+		addImportsToQue(objects, connection);
 
+		log.info("2");
+		System.out.println("koniec1");
+		executorService.shutdown();
+		System.out.println("czekam");
+		executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		log.info("3");
+		System.out.println("koniec2");
+		connection.close();
+
+	}
+	private static String createInsert(LinkedList<Map<String, String>> objects) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("INSERT INTO ");
 		sb.append("KLASA ");
@@ -66,15 +86,24 @@ public class DemoApplication {
 			sb.append("),");
 		}
 		sb.deleteCharAt(sb.length() - 1);
-//		System.out.println(sb.toString());
-
-		log.info("3");
-		statement.execute(sb.toString());
-		connection.commit();
-		log.info("4");
-
-		connection.close();
-
+//        System.out.println(sb.toString());
+		return sb.toString();
 	}
 
+	private static void addImportsToQue(LinkedList<Map<String, String>> objects, Connection connection) {
+		executorService.submit(new Runnable() {
+							 @Override
+							 public void run() {
+								 String insert = createInsert(objects);
+								 try (Statement statement = connection.createStatement()){
+									 statement.execute(insert);
+								 } catch (SQLException throwables) {
+									 throwables.printStackTrace();
+								 }
+
+							 }
+						 }
+		);
+
+	}
 }
