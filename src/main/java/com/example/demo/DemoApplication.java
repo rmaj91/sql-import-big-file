@@ -50,10 +50,13 @@ public class DemoApplication {
 		}
 		addImportsToQue(rowsData, connection);
 		log.info("Creating insert data finished.");
+
 		executorService.shutdown();
 		log.info("Waiting for all imports");
+
 		executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 		log.info("All imports finished.");
+
 		connection.close();
 		log.info("Db Connection closed.");
 	}
