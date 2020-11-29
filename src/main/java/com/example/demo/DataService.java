@@ -14,6 +14,8 @@ public class DataService {
 
     public static final int ROWS = 6_666_666;
     public static final int BATCH_SIZE = 25_000;
+    public static final int MAX_QUEUE_SIZE = 25;
+    public static final int MIN_QUEUE_SIZE = 5;
 
     private final Connection connection;
     private final ThreadPoolExecutor executor;
@@ -36,6 +38,11 @@ public class DataService {
             map.put(new String("name5"), new String("name5name5name5name5name5"));
             rowsData.add(map);
             if (i % BATCH_SIZE == 0) {
+                if (executor.getQueue().size() > MAX_QUEUE_SIZE) {
+                    while (executor.getQueue().size() > MIN_QUEUE_SIZE) {
+                        Thread.sleep(200);
+                    }
+                }
                 String insert = SqlHelper.createInsert(rowsData);
                 addImportsToQue(insert, connection);
                 rowsData = new LinkedList<>();
