@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 @SpringBootApplication
 public class DemoApplication {
 
-	public static final int ROWS = 6_666_666;
-	public static final int BATCH_SIZE = 2000;
+	public static final int ROWS = 666_666;
+	public static final int BATCH_SIZE = 20000;
 	public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
 	public static void main(String[] args) throws DatabaseException, SQLException, InterruptedException {
