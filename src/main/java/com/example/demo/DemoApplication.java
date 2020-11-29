@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 @SpringBootApplication
 public class DemoApplication {
 
-	public static final int COLUMNS = 6_666_666;
+	public static final int ROWS = 6_666_666;
 	public static final int BATCH_SIZE = 2000;
 	public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -35,7 +35,7 @@ public class DemoApplication {
 
 		log.info("Creating insert data");
 		List<Map<String, String>> rowsData = new ArrayList<>(BATCH_SIZE);
-		for (int i = 1; i <= COLUMNS; i++) {
+		for (int i = 1; i <= ROWS; i++) {
 			Map<String, String> map = new LinkedHashMap<>();
 			map.put(new String("name1"), new String("name1"));
 			map.put(new String("name2"), new String("name2"));
