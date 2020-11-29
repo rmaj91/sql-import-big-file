@@ -47,12 +47,16 @@ public class DemoApplication {
 			map.put(new String("name5"), new String("name5"));
 			rowsData.add(map);
 			if (i % BATCH_SIZE == 0) {
-				addImportsToQue(rowsData, connection);
+				String insert = createInsert(rowsData);
+				addImportsToQue(insert, connection);
 				rowsData= new LinkedList<>();
 				log.info("Batch nr: " + i/BATCH_SIZE + " created.");
 			}
 		}
-		addImportsToQue(rowsData, connection);
+		if (!rowsData.isEmpty()) {
+			String insert = createInsert(rowsData);
+			addImportsToQue(insert, connection);
+		}
 		log.info("Creating insert data finished.");
 
 		executorService.shutdown();
@@ -65,7 +69,36 @@ public class DemoApplication {
 		log.info("Db Connection closed.");
 	}
 
-	private static void addImportsToQue(LinkedList<Map<String, String>> rowsData, Connection connection) {
-		executorService.submit(new InsertDataJob(rowsData, connection));
+	private static void addImportsToQue(String insert, Connection connection) {
+		executorService.submit(new InsertDataJob(insert, connection));
+	}
+
+	private static String createInsert(LinkedList<Map<String, String>> objects) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("INSERT INTO ");
+		sb.append("KLASA ");
+		sb.append("(");
+		String columns = String.join(",", objects.get(0).keySet());
+		sb.append(columns);
+		sb.append(") values ");
+		for (Map<String, String> object : objects) {
+			sb.append("(");
+			for (String value : object.values()) {
+				if (value != null) {
+					sb.append("'");
+					sb.append(value);
+					sb.append("'");
+				}
+				sb.append(",");
+			}
+			deleteLastChar(sb);
+			sb.append("),");
+		}
+		deleteLastChar(sb);
+		return sb.toString();
+	}
+
+	private static void deleteLastChar(StringBuilder sb) {
+		sb.deleteCharAt(sb.length() - 1);
 	}
 }

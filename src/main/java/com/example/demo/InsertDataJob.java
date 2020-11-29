@@ -8,50 +8,23 @@ import java.util.Map;
 
 public class InsertDataJob implements Runnable {
 
-    private Connection connection;
-    private LinkedList<Map<String, String>> rowsData;
+    private final Connection connection;
+    private final String insert;
 
-    public InsertDataJob(LinkedList<Map<String, String>> rowsData, Connection connection) {
+    public InsertDataJob(String insert, Connection connection) {
         this.connection = connection;
-        this.rowsData = rowsData;
+        this.insert = insert;
     }
 
     @Override
     public void run() {
-        String insert = createInsert(rowsData);
         try (Statement statement = connection.createStatement()){
             statement.execute(insert);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        System.gc();
     }
 
-    private static String createInsert(LinkedList<Map<String, String>> objects) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("INSERT INTO ");
-        sb.append("KLASA ");
-        sb.append("(");
-        String columns = String.join(",", objects.get(0).keySet());
-        sb.append(columns);
-        sb.append(") values ");
-        for (Map<String, String> object : objects) {
-            sb.append("(");
-            for (String value : object.values()) {
-                if (value != null) {
-                    sb.append("'");
-                    sb.append(value);
-                    sb.append("'");
-                }
-                sb.append(",");
-            }
-            deleteLastChar(sb);
-            sb.append("),");
-        }
-        deleteLastChar(sb);
-        return sb.toString();
-    }
 
-    private static void deleteLastChar(StringBuilder sb) {
-        sb.deleteCharAt(sb.length() - 1);
-    }
 }
