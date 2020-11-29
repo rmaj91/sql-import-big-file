@@ -38,7 +38,7 @@ public class DemoApplication {
 
 		log.info("Creating insert data");
 		LinkedList<Map<String, String>> rowsData = new LinkedList<>();
-		for (int i = 0; i < COLUMNS; i++) {
+		for (int i = 1; i <= COLUMNS; i++) {
 			Map<String, String> map = new LinkedHashMap<>();
 			map.put(new String("name1"), new String("name1"));
 			map.put(new String("name2"), new String("name2"));
@@ -49,7 +49,7 @@ public class DemoApplication {
 			if (i % BATCH_SIZE == 0) {
 				String insert = createInsert(rowsData);
 				addImportsToQue(insert, connection);
-				rowsData= new LinkedList<>();
+				rowsData = new LinkedList<>();
 				log.info("Batch nr: " + i/BATCH_SIZE + " created.");
 			}
 		}
