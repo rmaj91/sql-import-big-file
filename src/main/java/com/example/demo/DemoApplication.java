@@ -9,10 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +34,7 @@ public class DemoApplication {
 		System.out.println("========================================");
 
 		log.info("Creating insert data");
-		LinkedList<Map<String, String>> rowsData = new LinkedList<>();
+		List<Map<String, String>> rowsData = new ArrayList<>(BATCH_SIZE);
 		for (int i = 1; i <= COLUMNS; i++) {
 			Map<String, String> map = new LinkedHashMap<>();
 			map.put(new String("name1"), new String("name1"));
@@ -73,7 +70,7 @@ public class DemoApplication {
 		executorService.submit(new InsertDataJob(insert, connection));
 	}
 
-	private static String createInsert(LinkedList<Map<String, String>> objects) {
+	private static String createInsert(List<Map<String, String>> objects) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("INSERT INTO ");
 		sb.append("KLASA ");
