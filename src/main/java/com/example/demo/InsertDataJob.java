@@ -3,8 +3,6 @@ package com.example.demo;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedList;
-import java.util.Map;
 
 public class InsertDataJob implements Runnable {
 
@@ -25,6 +23,4 @@ public class InsertDataJob implements Runnable {
         }
         System.gc();
     }
-
-
 }
