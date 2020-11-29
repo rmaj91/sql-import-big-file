@@ -85,6 +85,8 @@ public class DemoApplication {
 					sb.append("'");
 					sb.append(value);
 					sb.append("'");
+				} else {
+					sb.append("null");
 				}
 				sb.append(",");
 			}
